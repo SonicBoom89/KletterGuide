@@ -1,0 +1,45 @@
+package wolfgang.bergbauer.de.kletterguide.model;
+
+import java.util.List;
+
+import wolfgang.bergbauer.de.kletterguide.model.Route;
+
+/**
+ * Created by Wolfgang on 08.06.2015.
+ */
+public class ClimbingArea extends ClimbingBase{
+
+    private float longitude;
+    private float latitude;
+
+    private List<Route> routes;
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public List<Route> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(List<Route> routes) {
+        this.routes = routes;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%1s %2s %3s %4s %5s", getId(), getName(), getLatitude(), getLongitude(), getRanking());
+    }
+}
