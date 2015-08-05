@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 /**
  * This class is an implementation of {@link android.content.ContentProvider}.
- * It manages the access to the app´s database and implements methods for insertions, deletions and updates.
+ * It manages the access to the apps database and implements methods for insertions, deletions and updates.
  */
 public class ClimbingContentProvider extends ContentProvider {
 

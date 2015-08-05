@@ -1,11 +1,20 @@
 package wolfgang.bergbauer.de.kletterguide;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingGridViewAdapter;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaType;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
 
 /**
  * Created by Wolfgang on 04.08.2015.
@@ -34,8 +43,23 @@ public class PageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        TextView textView = (TextView) view;
-        textView.setText("Fragment #" + mPage);
+        GridView gridView = (GridView) view.findViewById(R.id.gridView_climbing);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            gridView.setNestedScrollingEnabled(true);
+        }
+        gridView.setAdapter(new ClimbingGridViewAdapter(getActivity(), createStubs()));
         return view;
+    }
+
+    private List<ClimbingBase> createStubs() {
+        List<ClimbingBase> items = new ArrayList<>();
+        for (int i = 0; i< 100; ++i) {
+            ClimbingBase item = new ClimbingBase(ClimbingAreaType.OUTDOOR);
+            item.setName("Area " + (i +1));
+            item.setRanking((float) Math.random());
+            item.setDrawableUrl("bg");
+            items.add(item);
+        }
+        return items;
     }
 }

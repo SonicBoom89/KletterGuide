@@ -42,6 +42,7 @@ public class ClimbingDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ROUTES_ID = "id";
     public static final String COLUMN_ROUTES_NAME = "name";
     public static final String COLUMN_ROUTES_RANKING = "ranking";
+    public static final String COLUMN_CLIMBINGAREAS_TYPE = "type";
 
     private Context context;
 

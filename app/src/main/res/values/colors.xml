@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Indigo 500-->
+    <color name="primary_500">#ff00b91a</color>
+    <!--Indigo 700-->
+    <color name="primary_700">#ff007b14</color>
+    <!--Pink 500-->
+    <color name="accent_500">#fffcfff7</color>
+    <!--Pink 700-->
+    <color name="accent_700">#fff3f3f3</color>
+    <color name="black_trans80">#33000000</color>
+
+    <color name="blue_grey">#455A64</color>
+
+    <color name="semi_black">#9a000000</color>
+
+</resources>

@@ -1,4 +1,4 @@
-package wolfgang.bergbauer.de.kletterguide;
+package wolfgang.bergbauer.de.kletterguide.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -9,15 +9,18 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
+import wolfgang.bergbauer.de.kletterguide.PageFragment;
+import wolfgang.bergbauer.de.kletterguide.R;
+
 /**
  * Created by Wolfgang on 04.08.2015.
  */
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int[] imageResId = {
-            android.R.drawable.ic_menu_add,
-            android.R.drawable.ic_menu_call,
-            android.R.drawable.ic_menu_mapmode,
+            R.drawable.ic_outdoor,
+            R.drawable.ic_outdoor,
+            android.R.drawable.ic_menu_info_details,
     };
 
     final int PAGE_COUNT = 3;

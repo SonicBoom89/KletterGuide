@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:elevation="10dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@drawable/climbingarea"
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_height="100dp"/>
+
+        <LinearLayout
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/semi_black_background"
+            android:orientation="vertical">
+
+        <TextView
+            android:text="Title"
+            android:id="@+id/textView_climbing_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+
+
+        <TextView
+            android:text="Subtitle"
+            android:id="@+id/textView_climbing_item_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@android:style/TextAppearance.Small"/>
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+</LinearLayout>

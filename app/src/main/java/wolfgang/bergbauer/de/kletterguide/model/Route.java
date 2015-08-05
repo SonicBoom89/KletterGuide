@@ -3,7 +3,7 @@ package wolfgang.bergbauer.de.kletterguide.model;
 /**
  * Created by Wolfgang on 08.06.2015.
  */
-public class Route extends ClimbingBase{
+public class Route {
 
     private String UIAARank;
 
