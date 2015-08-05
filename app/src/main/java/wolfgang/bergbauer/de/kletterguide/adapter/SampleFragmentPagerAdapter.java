@@ -11,6 +11,8 @@ import android.text.style.ImageSpan;
 
 import wolfgang.bergbauer.de.kletterguide.PageFragment;
 import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaPagerFragment;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaType;
 
 /**
  * Created by Wolfgang on 04.08.2015.
@@ -39,7 +41,15 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return PageFragment.newInstance(position + 1);
+        switch (position) {
+            case 0:
+                return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.OUTDOOR);
+            case 1:
+                return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.INDOOR);
+            default:
+                return PageFragment.newInstance(1);
+        }
+
     }
 
     @Override

@@ -1,11 +1,14 @@
 package wolfgang.bergbauer.de.kletterguide.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Wolfgang on 08.06.2015.
- */
-public class ClimbingBase {
+ */public class ClimbingBase implements Parcelable {
 
     private int id;
     private ClimbingAreaType climbingAreatype;
@@ -78,8 +81,54 @@ public class ClimbingBase {
         this.routes = routes;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%1s %2s %3s %4s %5s", getId(), getName(), getLatitude(), getLongitude(), getRanking());
+    protected ClimbingBase(Parcel in) {
+        id = in.readInt();
+        climbingAreatype = (ClimbingAreaType) in.readValue(ClimbingAreaType.class.getClassLoader());
+        name = in.readString();
+        ranking = in.readFloat();
+        drawableUrl = in.readString();
+        longitude = in.readFloat();
+        latitude = in.readFloat();
+        if (in.readByte() == 0x01) {
+            routes = new ArrayList<Route>();
+            in.readList(routes, Route.class.getClassLoader());
+        } else {
+            routes = null;
+        }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeValue(climbingAreatype);
+        dest.writeString(name);
+        dest.writeFloat(ranking);
+        dest.writeString(drawableUrl);
+        dest.writeFloat(longitude);
+        dest.writeFloat(latitude);
+        if (routes == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(routes);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<ClimbingBase> CREATOR = new Parcelable.Creator<ClimbingBase>() {
+        @Override
+        public ClimbingBase createFromParcel(Parcel in) {
+            return new ClimbingBase(in);
+        }
+
+        @Override
+        public ClimbingBase[] newArray(int size) {
+            return new ClimbingBase[size];
+        }
+    };
 }

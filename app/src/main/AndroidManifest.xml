@@ -24,6 +24,8 @@
                 android:resource="@xml/searchable" />
         </activity>
 
+        <activity android:name=".activities.ClimbingAreaDetailsActivity"/>
+
         <activity android:name=".TestActivity" android:label="Test"/>
 
 

@@ -1,6 +1,7 @@
 package wolfgang.bergbauer.de.kletterguide.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.List;
 
 import wolfgang.bergbauer.de.kletterguide.R;
@@ -56,7 +58,16 @@ public class ClimbingGridViewAdapter extends BaseAdapter {
             grid = inflater.inflate(R.layout.climbing_item, null);
             TextView title = (TextView) grid.findViewById(R.id.textView_climbing_item_title);
             TextView subTitle = (TextView) grid.findViewById(R.id.textView_climbing_item_subtitle);
-            ImageView imageView = (ImageView)grid.findViewById(R.id.image);
+            ImageView imageView = (ImageView)grid.findViewById(R.id.imageView_climbing_item);
+            if (currentItem.getDrawableUrl() != null) {
+                try {
+                    Drawable d = Drawable.createFromStream(mContext.getAssets().open(currentItem.getDrawableUrl()), null);
+                    imageView.setImageDrawable(d);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
             title.setText(currentItem.getName());
             subTitle.setText(currentItem.getRanking() + "");
 

@@ -1,17 +1,22 @@
 package wolfgang.bergbauer.de.kletterguide;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import wolfgang.bergbauer.de.kletterguide.activities.ClimbingAreaDetailsActivity;
 import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingGridViewAdapter;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaType;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
@@ -43,11 +48,28 @@ public class PageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        GridView gridView = (GridView) view.findViewById(R.id.gridView_climbing);
+        final GridView gridView = (GridView) view.findViewById(R.id.gridView_climbing);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             gridView.setNestedScrollingEnabled(true);
         }
         gridView.setAdapter(new ClimbingGridViewAdapter(getActivity(), createStubs()));
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ClimbingAreaDetailsActivity.class);
+                ClimbingBase climbingarea = (ClimbingBase) gridView.getAdapter().getItem(position);
+                intent.putExtra(AppConstants.EXTRA_CLIMBING_AREA, climbingarea);
+
+                String transitionName = getString(R.string.transition_climbing_area);
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                view,   // The view which starts the transition
+                                transitionName    // The transitionName of the view we’re transitioning to
+                        );
+                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            }
+        });
         return view;
     }
 
