@@ -28,5 +28,6 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.andraskindler.parallaxviewpager:parallaxviewpager:0.3.1'
+    compile 'com.diogobernardino:williamchart:2.0.1'
     compile 'com.android.support:palette-v7:22.2.0'
 }

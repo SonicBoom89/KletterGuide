@@ -22,11 +22,11 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
     private int[] imageResId = {
             R.drawable.ic_outdoor,
             R.drawable.ic_outdoor,
-            android.R.drawable.ic_menu_info_details,
+            R.drawable.ic_outdoor
     };
 
     final int PAGE_COUNT = 3;
-    private String tabTitles[] = new String[] { "Klettergebiete", "Kletterhallen", "Profil" };
+    private String tabTitles[] = new String[] { "Klettergebiete", "Kletterhallen", "Favoriten" };
     private Context context;
 
     public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {

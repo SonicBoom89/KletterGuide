@@ -1,5 +1,7 @@
 package wolfgang.bergbauer.de.kletterguide.model;
 
+import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,12 +13,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,7 @@ import wolfgang.bergbauer.de.kletterguide.AppConstants;
 import wolfgang.bergbauer.de.kletterguide.R;
 import wolfgang.bergbauer.de.kletterguide.activities.ClimbingAreaDetailsActivity;
 import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingGridViewAdapter;
+import wolfgang.bergbauer.de.kletterguide.adapter.TransitionAdapter;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingContentProvider;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
 
@@ -68,10 +73,9 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
         final GridView gridView = (GridView) view.findViewById(R.id.gridView_climbing);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            gridView.setNestedScrollingEnabled(true);
-        }
+
         gridViewAdapter = new ClimbingGridViewAdapter(getActivity(), climbingAreas);
         gridView.setAdapter(gridViewAdapter);
 
@@ -91,6 +95,7 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
                 ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
             }
         });
+
         return view;
     }
 

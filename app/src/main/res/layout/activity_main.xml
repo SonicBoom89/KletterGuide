@@ -42,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+                android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax" />
 
             <android.support.design.widget.TabLayout
@@ -52,18 +53,17 @@
                 android:layout_gravity="bottom"
                 app:tabGravity="center"
                 app:tabMode="scrollable"
+                android:fitsSystemWindows="true"
                 app:tabBackground="@android:color/transparent"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
-
-    <com.andraskindler.parallaxviewpager.ParallaxViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
+        <com.andraskindler.parallaxviewpager.ParallaxViewPager
+            android:id="@+id/viewpager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 </android.support.design.widget.CoordinatorLayout>
 
 
