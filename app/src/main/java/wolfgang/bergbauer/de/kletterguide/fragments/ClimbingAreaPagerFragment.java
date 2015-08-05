@@ -1,11 +1,8 @@
-package wolfgang.bergbauer.de.kletterguide.model;
+package wolfgang.bergbauer.de.kletterguide.fragments;
 
-import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -13,25 +10,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import wolfgang.bergbauer.de.kletterguide.AppConstants;
+import wolfgang.bergbauer.de.kletterguide.ClimbingAreaType;
 import wolfgang.bergbauer.de.kletterguide.R;
 import wolfgang.bergbauer.de.kletterguide.activities.ClimbingAreaDetailsActivity;
 import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingGridViewAdapter;
-import wolfgang.bergbauer.de.kletterguide.adapter.TransitionAdapter;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingContentProvider;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
 
 /**
  * Created by berg21 on 05.08.2015.
@@ -45,7 +41,7 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
     private static final String TAG = ClimbingAreaPagerFragment.class.getSimpleName();
 
     private ClimbingAreaType climbingAreaType;
-    private List<ClimbingBase> climbingAreas;
+    private List<ClimbingArea> climbingAreas;
     private ClimbingGridViewAdapter gridViewAdapter;
 
     public static ClimbingAreaPagerFragment newInstance(ClimbingAreaType type) {
@@ -83,7 +79,7 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ClimbingAreaDetailsActivity.class);
-                ClimbingBase climbingarea = (ClimbingBase) gridView.getAdapter().getItem(position);
+                ClimbingArea climbingarea = (ClimbingArea) gridView.getAdapter().getItem(position);
                 intent.putExtra(AppConstants.EXTRA_CLIMBING_AREA, climbingarea);
 
                 String transitionName = getString(R.string.transition_climbing_area);
@@ -143,6 +139,7 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
                     int climbingAreaRankingColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_RANKING);
                     int climbingAreaTypeColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_TYPE);
                     int climbingAreaImageColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_IMAGE_URL);
+                    int climbingAreaDescriptionColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_DESCRIPTION);
 
                     int id = data.getInt(climbingAreaIdColumnIndex);
                     String name = data.getString(climbingAreaNameColumnIndex);
@@ -151,14 +148,16 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
                     float ranking = data.getFloat(climbingAreaRankingColumnIndex);
                     String type = data.getString(climbingAreaTypeColumnIndex);
                     String imageUrl = data.getString(climbingAreaImageColumnIndex);
+                    String description = data.getString(climbingAreaDescriptionColumnIndex);
 
-                    ClimbingBase climbingArea = new ClimbingBase(ClimbingAreaType.valueOf(type));
+                    ClimbingArea climbingArea = new ClimbingArea(ClimbingAreaType.valueOf(type));
                     climbingArea.setId(id);
                     climbingArea.setName(name);
                     climbingArea.setLatitude(latitude);
                     climbingArea.setLongitude(longitude);
                     climbingArea.setRanking(ranking);
                     climbingArea.setDrawableUrl(imageUrl);
+                    climbingArea.setDescription(description);
 
                     Log.d(TAG, "Climbing Area loaded: " + climbingArea);
                     climbingAreas.add(climbingArea);

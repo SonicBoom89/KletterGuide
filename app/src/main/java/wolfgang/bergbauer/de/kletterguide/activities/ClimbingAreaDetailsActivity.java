@@ -1,49 +1,72 @@
 package wolfgang.bergbauer.de.kletterguide.activities;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
-import android.view.View;
-import android.widget.ImageButton;
+import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.db.chart.Tools;
-import com.db.chart.listener.OnEntryClickListener;
-import com.db.chart.model.BarSet;
-import com.db.chart.view.BarChartView;
-import com.db.chart.view.ChartView;
-import com.db.chart.view.XController;
-import com.db.chart.view.YController;
-import com.db.chart.view.animation.Animation;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import wolfgang.bergbauer.de.kletterguide.AppConstants;
 import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.adapter.RouteCardViewAdapter;
 import wolfgang.bergbauer.de.kletterguide.adapter.TransitionAdapter;
-import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
+import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingContentProvider;
+import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
+import wolfgang.bergbauer.de.kletterguide.formatter.MyValueFormatter;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingRoute;
 
 /**
  * Created by berg21 on 05.08.2015.
  */
-public class ClimbingAreaDetailsActivity extends AppCompatActivity {
+public class ClimbingAreaDetailsActivity extends AppCompatActivity implements OnChartValueSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    private BarChartView mChartOne;
-    private ImageButton mPlayOne;
-    private boolean mUpdateOne;
-    private final String[] mLabelsOne= {"2", "3", "4", "5", "6", "7", "8", "9", "10", "11"};
-    private final float[] mValuesOne = {0, 1, 2, 1, 3, 4, 3, 2, 0, 1};
+    /* Init constants to identify loaders */
+    private static final int URL_ROUTES_LOADER_ALL = 0;
+    private static final String TAG = ClimbingAreaDetailsActivity.class.getSimpleName();
+    
+    private static final int MIN_UIAA_LEVEL_CHART = 2;
+    private static final int MAX_UIAA_LEVEL_CHART = 12;
+    protected BarChart mChart;
+
+    private List<ClimbingRoute> selectedRoutes = new ArrayList<>();
+    private ClimbingArea selectedArea;
+
+    private RouteCardViewAdapter recyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,79 +74,94 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity {
 
         setContentView(R.layout.climbing_area_details);
 
-        ClimbingBase climbingBase = getIntent().getExtras().getParcelable(AppConstants.EXTRA_CLIMBING_AREA);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        initChart(climbingBase);
-        TextView header = (TextView) findViewById(R.id.textHeader);
-        header.setText(climbingBase.getName());
+
+        selectedArea = getIntent().getExtras().getParcelable(AppConstants.EXTRA_CLIMBING_AREA);
+        selectedArea.setRoutes(new ArrayList<ClimbingRoute>());//TODO Load with loader
+
+
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_climbing_details);
+        collapsingToolbarLayout.setTitle(selectedArea.getName());
+
+
+        initChart(selectedArea);
+        initRouteList(selectedArea);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView_climbing_area_details);
-        if (climbingBase.getDrawableUrl() != null) {
+        if (selectedArea.getDrawableUrl() != null) {
             try {
-                Drawable d = Drawable.createFromStream(getAssets().open(climbingBase.getDrawableUrl()), null);
+                Drawable d = Drawable.createFromStream(getAssets().open(selectedArea.getDrawableUrl()), null);
                 imageView.setImageDrawable(d);
             } catch (IOException e) {
                 e.printStackTrace();
             }
        }
         animateView();
+        
+        getSupportLoaderManager().restartLoader(URL_ROUTES_LOADER_ALL, null, this);
     }
 
-    private void initChart(ClimbingBase climbingBase) {
+    private void initRouteList(ClimbingArea selectedArea) {
+        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
+        recList.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recList.setLayoutManager(llm);
+        recyclerViewAdapter = new RouteCardViewAdapter(selectedRoutes);
+        recList.setAdapter(recyclerViewAdapter);
+        recList.setItemAnimator(new SlideInUpAnimator());
+
+        recyclerViewAdapter.notifyItemRangeChanged(0, selectedRoutes.size());
+    }
+
+    private void initChart(ClimbingArea climbingArea) {
         // Init first chart
-        mUpdateOne = true;
-        mChartOne = (BarChartView) findViewById(R.id.barchart1);
-        showChart(0, mChartOne);
+        mChart = (BarChart) findViewById(R.id.chart1);
+        mChart.setOnChartValueSelectedListener(this);
+
+        mChart.getLegend().setEnabled(false);
+        mChart.setDrawBarShadow(false);
+        mChart.setDrawValueAboveBar(true);
+        mChart.setDescription("");
+
+        // if more than 60 entries are displayed in the chart, no values will be
+        // drawn
+        mChart.setMaxVisibleValueCount(60);
+
+        // scaling can now only be done on x- and y-axis separately
+        mChart.setPinchZoom(false);
+        mChart.setDoubleTapToZoomEnabled(false);
+        mChart.setDragEnabled(false);
+        mChart.setScaleEnabled(false);
+        mChart.setDrawGridBackground(false);
+
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setSpaceBetweenLabels(2);
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setEnabled(false);
+
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setEnabled(false);
+
+
     }
 
-    /**
-     * Show a CardView chart
-     * @param tag   Tag specifying which chart should be dismissed
-     * @param chart   Chart view
-     */
-    private void showChart(final int tag, final ChartView chart){
-
-        switch(tag) {
-            case 0:
-                produceOne(chart); break;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                ActivityCompat.finishAfterTransition(this);
+                return false;
         }
-    }
-
-    public void produceOne(ChartView chart){
-        final BarChartView barChart = (BarChartView) chart;
-
-        barChart.setOnEntryClickListener(new OnEntryClickListener() {
-            @Override
-            public void onClick(int setIndex, int entryIndex, Rect rect) {
-                Snackbar.make(barChart, "Lade Alle Routen " + entryIndex, Snackbar.LENGTH_SHORT).show();
-            }
-        });
-
-        BarSet barSet = new BarSet(mLabelsOne, mValuesOne);
-        barSet.setColor(getResources().getColor(R.color.primary_700));
-        barChart.addData(barSet);
-
-        barChart.setSetSpacing(Tools.fromDpToPx(-15));
-        barChart.setBarSpacing(Tools.fromDpToPx(35));
-        barChart.setRoundCorners(Tools.fromDpToPx(2));
-
-        Paint gridPaint = new Paint();
-        gridPaint.setColor(Color.parseColor("#8986705C"));
-        gridPaint.setStyle(Paint.Style.STROKE);
-        gridPaint.setAntiAlias(true);
-        gridPaint.setStrokeWidth(Tools.fromDpToPx(1.75f));
-
-        barChart.setBorderSpacing(5)
-                .setAxisBorderValues(0, 10, 2)
-                .setGrid(BarChartView.GridType.NONE, gridPaint)
-                .setYAxis(false)
-                .setXLabels(XController.LabelPosition.OUTSIDE)
-                .setYLabels(YController.LabelPosition.NONE)
-                .setLabelsColor(getResources().getColor(R.color.blue_grey))
-                .setAxisColor(getResources().getColor(R.color.primary_500));
-
-        int[] order = {0, 1, 2, 3 , 4 , 5, 6,7 ,8,9};
-        barChart.show(new Animation().setOverlap(.5f, order));
+        return false;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -143,5 +181,180 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity {
             findViewById(R.id.fab).animate().alpha(1.0f).start();
             findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f).start();
         }
+    }
+
+    private void setChartData(ClimbingArea ClimbingArea) {
+
+        HashMap<Integer, Integer> difficultyMap =new HashMap<>();
+        for (int i = MIN_UIAA_LEVEL_CHART; i < MAX_UIAA_LEVEL_CHART; ++i)
+        {
+            difficultyMap.put(i, 0);
+        }
+
+        for (ClimbingRoute route : ClimbingArea.getRoutes())
+        {
+            String difficulty = route.getUIAARank();
+            int routeDifficulty = trimUIAARank(difficulty);
+            if (difficultyMap.containsKey(routeDifficulty))
+            {
+                difficultyMap.put(routeDifficulty, difficultyMap.get(routeDifficulty) + 1);
+            }
+        }
+
+        ArrayList<BarEntry> routeDifficulties = new ArrayList<BarEntry>();
+        int indexCounter = 0;
+        String[] xVals = new String[difficultyMap.size()];
+        List<Integer> orderedList = new ArrayList<>(difficultyMap.keySet());
+        Collections.sort(orderedList);
+        for (Integer difficulty : orderedList)
+        {
+            xVals[indexCounter] = difficulty + "";
+            BarEntry entry = new BarEntry(difficultyMap.get(difficulty), indexCounter++ , difficulty +"");
+            routeDifficulties.add(entry);
+        }
+
+        BarDataSet set1 = new BarDataSet(routeDifficulties, "Schwierigkeiten");
+        set1.setColor(getResources().getColor(R.color.primary_700));
+        set1.setBarSpacePercent(35f);
+
+        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(xVals, dataSets);
+        data.setValueFormatter(new MyValueFormatter());
+        data.setValueTextSize(10f);
+
+        mChart.setData(data);
+        mChart.animateX(1000);
+        mChart.animateY(1000);
+    }
+
+    private int trimUIAARank(String difficulty) {
+        String trimmedDifficulty = difficulty.replaceAll("[\\+\\-abc]", "");
+        int routeDifficulty = Integer.parseInt(trimmedDifficulty);
+        return routeDifficulty;
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+        int selectedDifficulty = Integer.parseInt((String) e.getData());
+
+        clearSelectedRoutes();
+
+       for (ClimbingRoute route : selectedArea.getRoutes())
+       {
+           if (trimUIAARank(route.getUIAARank()) == selectedDifficulty)
+               selectedRoutes.add(route);
+       }
+    }
+
+    private void clearSelectedRoutes() {
+        int size = selectedRoutes.size();
+        for (int i = 0; i < size; ++i)
+        {
+            selectedRoutes.remove(0);
+            recyclerViewAdapter.notifyItemRemoved(i);
+        }
+    }
+
+    public void onNothingSelected() {
+        clearSelectedRoutes();
+        selectedRoutes.addAll(selectedArea.getRoutes());
+    };
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
+        // Construct the new query in the form of a Cursor Loader. Use the id
+        // parameter to contruct and return different loaders.
+
+        String[] projection = null;
+        String where = null;
+        String[] whereArgs = null;
+        String sortOrder = null;
+        // Query URI
+        Uri queryUri = null;
+        switch (loaderID) {
+            case URL_ROUTES_LOADER_ALL:
+                queryUri = ClimbingContentProvider.ROUTES_URI;
+                where = ClimbingDBHelper.COLUMN_ROUTES_CLIMBINGAREA_ID + "= ?";
+                whereArgs = new String[]{String.valueOf(selectedArea.getId())};
+                break;
+            default:
+        }
+
+        // Create the new Cursor loader.
+        return new CursorLoader(this, queryUri,
+                projection, where, whereArgs, sortOrder);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Replace the result Cursor displayed by the Cursor Adapter with
+        // the new result set.
+
+        // This handler is not synchonrized with the UI thread, so you
+        // will need to synchronize it before modiyfing any UI elements
+        // directly.
+        switch (loader.getId()) {
+            case URL_ROUTES_LOADER_ALL:
+                while(data.moveToNext()) {
+                    
+                    int climbingRouteIdColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_ID);
+                    int climbingRouteNameColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_NAME);
+                    int climbingRouteLatitudeColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_LATITUDE);
+                    int climbingRouteLongitudeColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_LONGITUDE);
+                    int climbingRouteRankingColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_RANKING);
+                    int climbingRouteImageColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_IMAGE_URL);
+                    int climbingRouteDifficultyColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_UIAA);
+                    int climbingRouteFollowClimbColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_FOLLOW_CLIMB_ACCOMPLISHED);
+                    int climbingRouteLeadingClimbColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_LEADING_CLIMB_ACCOMPLISHED);
+                    int climbingRouteRouteAccomplishedColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_ROUTE_ACCOMPLISHED);
+                    int climbingRouteClimbingAreaColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_ROUTES_CLIMBINGAREA_ID);
+
+                    int id = data.getInt(climbingRouteIdColumnIndex);
+                    String name = data.getString(climbingRouteNameColumnIndex);
+                    float latitude = data.getFloat(climbingRouteLatitudeColumnIndex);
+                    float longitude = data.getFloat(climbingRouteLongitudeColumnIndex);
+                    float ranking = data.getFloat(climbingRouteRankingColumnIndex);
+                    String difficulty = data.getString(climbingRouteDifficultyColumnIndex);
+                    String imageUrl = data.getString(climbingRouteImageColumnIndex);
+                    boolean followClimbAccomplished = data.getInt(climbingRouteFollowClimbColumnIndex)>0;
+                    boolean leadClimbAccomplished = data.getInt(climbingRouteLeadingClimbColumnIndex)>0;
+                    boolean routeAccomplished = data.getInt(climbingRouteRouteAccomplishedColumnIndex)>0;
+                    int climbingArea = data.getInt(climbingRouteClimbingAreaColumnIndex);
+
+                    ClimbingRoute climbingRoute = new ClimbingRoute();
+                    climbingRoute.setId(id);
+                    climbingRoute.setName(name);
+                    climbingRoute.setLatitude(latitude);
+                    climbingRoute.setLongitude(longitude);
+                    climbingRoute.setRanking(ranking);
+                    climbingRoute.setDrawableUrl(imageUrl);
+                    climbingRoute.setUIAARank(difficulty);
+                    climbingRoute.setFollowClimbAccomplished(followClimbAccomplished);
+                    climbingRoute.setLeadClimbAccomplished(leadClimbAccomplished);
+                    climbingRoute.setRouteAccomplished(routeAccomplished);
+
+                    Log.d(TAG, "Climbing Area loaded: " + climbingArea);
+                    selectedArea.getRoutes().add(climbingRoute);
+                }
+                break;
+            default:
+        }
+
+        int size = selectedRoutes.size();
+        clearSelectedRoutes();
+        selectedRoutes.addAll(selectedArea.getRoutes());
+        recyclerViewAdapter.notifyItemRangeRemoved(0, size);
+        setChartData(selectedArea);
+
+        TextView sumRoutes = (TextView) findViewById(R.id.textView_sum_routes);
+        sumRoutes.setText(selectedArea.getRoutes().size() + "");
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

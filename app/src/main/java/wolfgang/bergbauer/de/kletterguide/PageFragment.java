@@ -18,7 +18,7 @@ import java.util.List;
 
 import wolfgang.bergbauer.de.kletterguide.activities.ClimbingAreaDetailsActivity;
 import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingGridViewAdapter;
-import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaType;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
 
 /**
@@ -58,7 +58,7 @@ public class PageFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ClimbingAreaDetailsActivity.class);
-                ClimbingBase climbingarea = (ClimbingBase) gridView.getAdapter().getItem(position);
+                ClimbingArea climbingarea = (ClimbingArea) gridView.getAdapter().getItem(position);
                 intent.putExtra(AppConstants.EXTRA_CLIMBING_AREA, climbingarea);
 
                 String transitionName = getString(R.string.transition_climbing_area);
@@ -73,10 +73,10 @@ public class PageFragment extends Fragment {
         return view;
     }
 
-    private List<ClimbingBase> createStubs() {
-        List<ClimbingBase> items = new ArrayList<>();
+    private List<ClimbingArea> createStubs() {
+        List<ClimbingArea> items = new ArrayList<>();
         for (int i = 0; i< 100; ++i) {
-            ClimbingBase item = new ClimbingBase(ClimbingAreaType.OUTDOOR);
+            ClimbingArea item = new ClimbingArea(ClimbingAreaType.OUTDOOR);
             item.setName("Area " + (i +1));
             item.setRanking((float) Math.random());
             item.setDrawableUrl("bg");

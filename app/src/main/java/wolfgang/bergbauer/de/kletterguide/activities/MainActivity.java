@@ -1,45 +1,25 @@
-package wolfgang.bergbauer.de.kletterguide;
+package wolfgang.bergbauer.de.kletterguide.activities;
 
-import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
-import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.andraskindler.parallaxviewpager.ParallaxViewPager;
-
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
-import wolfgang.bergbauer.de.kletterguide.adapter.SampleFragmentPagerAdapter;
-import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingContentProvider;
+import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingFragmentPagerAdapter;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
-import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaType;
-import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -70,9 +50,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ParallaxViewPager viewPager = (ParallaxViewPager) findViewById(R.id.viewpager);
-        viewPager.setOverlapPercentage(0.25f);
-        viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), MainActivity.this));
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(new ClimbingFragmentPagerAdapter(getSupportFragmentManager(), MainActivity.this));
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);

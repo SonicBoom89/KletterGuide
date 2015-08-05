@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
 
 /**
@@ -22,9 +23,9 @@ public class ClimbingGridViewAdapter extends BaseAdapter {
 
     private Context mContext;
 
-    List<ClimbingBase> items;
+    List<ClimbingArea> items;
 
-    public ClimbingGridViewAdapter(Context c, List<ClimbingBase> items) {
+    public ClimbingGridViewAdapter(Context c, List<ClimbingArea> items) {
         mContext = c;
         this.items = items;
     }

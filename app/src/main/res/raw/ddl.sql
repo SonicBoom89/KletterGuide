@@ -1,2 +1,2 @@
-CREATE TABLE CLIMBINGAREAS ( id integer primary key autoincrement, name varchar(100), latitude float, longitude float, ranking float, type varchar(10), imageurl varchar(255));
-CREATE TABLE ROUTES ( id integer primary key autoincrement, climbingarea integer, name varchar(100), ranking float, uiaa varchar(10), foreign key(climbingarea) references CLIMBINGAREAS(id));
+CREATE TABLE CLIMBINGAREAS ( id integer primary key autoincrement, name varchar(100), latitude float, longitude float, ranking float, type varchar(10), imageurl varchar(255), description text);
+CREATE TABLE ROUTES ( id integer primary key autoincrement, climbingarea integer, name varchar(100), ranking float, uiaa varchar(10), latitude float, longitude float, imageurl varchar(255), routeAccomplished boolean default false, leadingClimbAccomplished boolean default false, followClimbAccomplished boolean default false, foreign key(climbingarea) references CLIMBINGAREAS(id));

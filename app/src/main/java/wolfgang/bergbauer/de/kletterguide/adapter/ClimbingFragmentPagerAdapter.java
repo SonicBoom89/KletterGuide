@@ -9,15 +9,15 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
+import wolfgang.bergbauer.de.kletterguide.ClimbingAreaType;
 import wolfgang.bergbauer.de.kletterguide.PageFragment;
 import wolfgang.bergbauer.de.kletterguide.R;
-import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaPagerFragment;
-import wolfgang.bergbauer.de.kletterguide.model.ClimbingAreaType;
+import wolfgang.bergbauer.de.kletterguide.fragments.ClimbingAreaPagerFragment;
 
 /**
  * Created by Wolfgang on 04.08.2015.
  */
-public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+public class ClimbingFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int[] imageResId = {
             R.drawable.ic_outdoor,
@@ -29,7 +29,7 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
     private String tabTitles[] = new String[] { "Klettergebiete", "Kletterhallen", "Favoriten" };
     private Context context;
 
-    public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
+    public ClimbingFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.context = context;
     }
@@ -46,10 +46,8 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
                 return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.OUTDOOR);
             case 1:
                 return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.INDOOR);
-            default:
-                return PageFragment.newInstance(1);
         }
-
+        return null;
     }
 
     @Override

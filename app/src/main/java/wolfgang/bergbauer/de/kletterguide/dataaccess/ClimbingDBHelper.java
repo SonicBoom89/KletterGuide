@@ -38,12 +38,21 @@ public class ClimbingDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CLIMBINGAREAS_RANKING = "ranking";
     public static final String COLUMN_CLIMBINGAREAS_LATITUDE = "latitude";
     public static final String COLUMN_CLIMBINGAREAS_LONGITUDE = "longitude";
+    public static final String COLUMN_CLIMBINGAREAS_TYPE = "type";
+    public static final String COLUMN_CLIMBINGAREAS_DESCRIPTION = "description";
+    public static final String COLUMN_CLIMBINGAREAS_IMAGE_URL = "imageurl";
 
     public static final String COLUMN_ROUTES_ID = "id";
     public static final String COLUMN_ROUTES_NAME = "name";
+    public static final String COLUMN_ROUTES_UIAA = "uiaa";
     public static final String COLUMN_ROUTES_RANKING = "ranking";
-    public static final String COLUMN_CLIMBINGAREAS_TYPE = "type";
-    public static final String COLUMN_CLIMBINGAREAS_IMAGE_URL = "imageurl";
+    public static final String COLUMN_ROUTES_LATITUDE = "latitude";
+    public static final String COLUMN_ROUTES_LONGITUDE = "longitude";
+    public static final String COLUMN_ROUTES_IMAGE_URL = "imageurl";
+    public static final String COLUMN_ROUTES_ROUTE_ACCOMPLISHED = "routeAccomplished";
+    public static final String COLUMN_ROUTES_LEADING_CLIMB_ACCOMPLISHED = "leadingClimbAccomplished";
+    public static final String COLUMN_ROUTES_FOLLOW_CLIMB_ACCOMPLISHED = "followClimbAccomplished";
+    public static final String COLUMN_ROUTES_CLIMBINGAREA_ID = "climbingarea";
 
     private Context context;
 
