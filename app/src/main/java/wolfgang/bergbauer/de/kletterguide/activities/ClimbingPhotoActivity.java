@@ -68,6 +68,12 @@ public class ClimbingPhotoActivity extends ToolbarActivity {
             }
         });
         croppedImage = (ImageView) findViewById(R.id.imageView_cropped_photo);
+        croppedImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageIntent();
+            }
+        });
         openImageIntent();
     }
 
