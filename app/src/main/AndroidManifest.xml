@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="wolfgang.bergbauer.de.kletterguide" >
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,6 +30,10 @@
 
         <activity android:name=".activities.ClimbingAreaDetailsActivity"/>
         <activity android:name=".activities.FullScreenImageDialog" android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+        <activity android:name=".activities.ClimbingPhotoActivity"/>
+        <!-- Declare the bundled CropImage Activity -->
+        <activity android:name="com.android.camera.CropImage"/>
+        <activity android:name=".activities.DrawOnBitmapActivity"/>
 
 
         <provider

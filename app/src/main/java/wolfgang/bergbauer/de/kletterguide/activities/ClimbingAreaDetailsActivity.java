@@ -2,12 +2,13 @@ package wolfgang.bergbauer.de.kletterguide.activities;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,8 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -33,7 +33,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,8 +40,9 @@ import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import wolfgang.bergbauer.de.kletterguide.AppConstants;
+import wolfgang.bergbauer.de.kletterguide.GraphicHelper;
 import wolfgang.bergbauer.de.kletterguide.R;
-import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingFragmentPagerAdapter;
+import wolfgang.bergbauer.de.kletterguide.Utils;
 import wolfgang.bergbauer.de.kletterguide.adapter.HeaderImagePagerAdapter;
 import wolfgang.bergbauer.de.kletterguide.adapter.RouteCardViewAdapter;
 import wolfgang.bergbauer.de.kletterguide.adapter.TransitionAdapter;
@@ -56,15 +56,12 @@ import wolfgang.bergbauer.de.kletterguide.model.ClimbingRoute;
 /**
  * Created by berg21 on 05.08.2015.
  */
-public class ClimbingAreaDetailsActivity extends AppCompatActivity implements OnChartValueSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
-
+public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnChartValueSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     /* Init constants to identify loaders */
     private static final int URL_ROUTES_LOADER_ALL = 0;
     private static final String TAG = ClimbingAreaDetailsActivity.class.getSimpleName();
-    
-    private static final int MIN_UIAA_LEVEL_CHART = 2;
-    private static final int MAX_UIAA_LEVEL_CHART = 12;
+
     protected BarChart mChart;
 
     private List<ClimbingRoute> selectedRoutes = new ArrayList<>();
@@ -77,16 +74,10 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.climbing_area_details);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        enableToolbar();
 
         selectedArea = getIntent().getExtras().getParcelable(AppConstants.EXTRA_CLIMBING_AREA);
         selectedArea.setRoutes(new ArrayList<ClimbingRoute>());//TODO Load with loader
-
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_climbing_details);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
@@ -95,6 +86,7 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         initViewPagerHeader();
         initChart(selectedArea);
         initRouteList(selectedArea);
+        initFab();
 
         /*
         ImageView imageView = (ImageView) findViewById(R.id.imageView_climbing_area_details);
@@ -110,6 +102,17 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
           */
         animateView();
         getSupportLoaderManager().restartLoader(URL_ROUTES_LOADER_ALL, null, this);
+    }
+
+    private void initFab() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClimbingAreaDetailsActivity.this, ClimbingPhotoActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initViewPagerHeader() {
@@ -135,7 +138,7 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
-        recyclerViewAdapter = new RouteCardViewAdapter(selectedRoutes);
+        recyclerViewAdapter = new RouteCardViewAdapter(this, selectedRoutes);
         recList.setAdapter(recyclerViewAdapter);
         recList.setItemAnimator(new SlideInUpAnimator());
 
@@ -210,7 +213,7 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
     private void setChartData(ClimbingArea ClimbingArea) {
 
         HashMap<Integer, Integer> difficultyMap =new HashMap<>();
-        for (int i = MIN_UIAA_LEVEL_CHART; i < MAX_UIAA_LEVEL_CHART; ++i)
+        for (int i = AppConstants.MIN_UIAA_LEVEL; i <= AppConstants.MAX_UIAA_LEVEL; ++i)
         {
             difficultyMap.put(i, 0);
         }
@@ -218,7 +221,7 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         for (ClimbingRoute route : ClimbingArea.getRoutes())
         {
             String difficulty = route.getUIAARank();
-            int routeDifficulty = trimUIAARank(difficulty);
+            int routeDifficulty = Utils.trimUIAARank(difficulty);
             if (difficultyMap.containsKey(routeDifficulty))
             {
                 difficultyMap.put(routeDifficulty, difficultyMap.get(routeDifficulty) + 1);
@@ -238,7 +241,13 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         }
 
         BarDataSet set1 = new BarDataSet(routeDifficulties, "Schwierigkeiten");
-        set1.setColor(getResources().getColor(R.color.primary_700));
+        //set1.setColor(getResources().getColor(R.color.primary_700));
+        int[] uiaaChartColors = new int[AppConstants.UIAA_CHART_COLORS.length];
+        for (int i = 0; i < uiaaChartColors.length; ++i)
+        {
+            uiaaChartColors[i] = getResources().getColor(AppConstants.UIAA_CHART_COLORS[i]);
+        }
+        set1.setColors(uiaaChartColors);
         set1.setBarSpacePercent(35f);
 
         ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
@@ -253,12 +262,6 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         mChart.animateY(1000);
     }
 
-    private int trimUIAARank(String difficulty) {
-        String trimmedDifficulty = difficulty.replaceAll("[\\+\\-abc]", "");
-        int routeDifficulty = Integer.parseInt(trimmedDifficulty);
-        return routeDifficulty;
-    }
-
     @SuppressLint("NewApi")
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
@@ -268,7 +271,7 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
 
        for (ClimbingRoute route : selectedArea.getRoutes())
        {
-           if (trimUIAARank(route.getUIAARank()) == selectedDifficulty)
+           if (Utils.trimUIAARank(route.getUIAARank()) == selectedDifficulty)
                selectedRoutes.add(route);
        }
     }

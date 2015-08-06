@@ -22,13 +22,11 @@ import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingFragmentPagerAdapter;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ToolbarActivity {
 
     /* Tag for logging */
     public static final String TAG = MainActivity.class.getSimpleName();
 
-
-    private Toolbar toolbar;
     private CollapsingToolbarLayout collapsing_toolbar;
 
     @Override
@@ -43,11 +41,9 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         db.close();
         setContentView(R.layout.activity_main);
+        enableToolbar();
 
         collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-
-        toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-        setSupportActionBar(toolbar);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);

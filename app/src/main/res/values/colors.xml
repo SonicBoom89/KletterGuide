@@ -15,4 +15,16 @@
 
     <color name="semi_black">#9a000000</color>
 
+    <color name="uiaa_color_3">#0C671A</color>
+    <color name="uiaa_color_4">#277610</color>
+    <color name="uiaa_color_5">#31A110</color>
+    <color name="uiaa_color_6">#92C707</color>
+    <color name="uiaa_color_7">#BEDE02</color>
+    <color name="uiaa_color_8">#DCDF00</color>
+    <color name="uiaa_color_9">#E1C502</color>
+    <color name="uiaa_color_10">#E19807</color>
+    <color name="uiaa_color_11">#E1630D</color>
+    <color name="uiaa_color_12">#E10E13</color>
+    <color name="uiaa_color_13">#FF0012</color>
+
 </resources>

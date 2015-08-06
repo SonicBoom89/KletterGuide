@@ -1,6 +1,8 @@
 package wolfgang.bergbauer.de.kletterguide.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import wolfgang.bergbauer.de.kletterguide.AppConstants;
 import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.Utils;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingRoute;
 
 /**
@@ -22,10 +26,12 @@ import wolfgang.bergbauer.de.kletterguide.model.ClimbingRoute;
 public class RouteCardViewAdapter extends RecyclerView.Adapter<RouteCardViewAdapter.RouteViewHolder> {
 
     private List<ClimbingRoute> routeList;
-    // Allows to remember the last item shown on screen
 
-    public RouteCardViewAdapter(List<ClimbingRoute> routeList) {
+    private Context context;
+
+    public RouteCardViewAdapter(Context context, List<ClimbingRoute> routeList) {
         this.routeList = routeList;
+        this.context = context;
     }
 
     @Override
@@ -38,6 +44,13 @@ public class RouteCardViewAdapter extends RecyclerView.Adapter<RouteCardViewAdap
         ClimbingRoute ci = routeList.get(position);
         routeViewHolder.vTitle.setText(ci.getName());
         routeViewHolder.vDifficulty.setText(ci.getUIAARank());
+
+
+        int currentDifficuilty = Utils.trimUIAARank(ci.getUIAARank());
+        int selectedColor = AppConstants.UIAA_CHART_COLORS[currentDifficuilty - AppConstants.MIN_UIAA_LEVEL];
+
+        ((GradientDrawable)routeViewHolder.vDifficulty.getBackground()).setColor(
+                context.getResources().getColor(selectedColor));
     }
 
 
