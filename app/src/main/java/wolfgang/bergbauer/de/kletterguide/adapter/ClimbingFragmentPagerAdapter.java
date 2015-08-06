@@ -10,7 +10,6 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
 import wolfgang.bergbauer.de.kletterguide.ClimbingAreaType;
-import wolfgang.bergbauer.de.kletterguide.PageFragment;
 import wolfgang.bergbauer.de.kletterguide.R;
 import wolfgang.bergbauer.de.kletterguide.fragments.ClimbingAreaPagerFragment;
 
@@ -20,9 +19,9 @@ import wolfgang.bergbauer.de.kletterguide.fragments.ClimbingAreaPagerFragment;
 public class ClimbingFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int[] imageResId = {
-            R.drawable.ic_outdoor,
-            R.drawable.ic_outdoor,
-            R.drawable.ic_outdoor
+            R.drawable.ic_terrain_white_24dp,
+            R.drawable.ic_business_white_24dp,
+            R.drawable.ic_history_white_24dp
     };
 
     final int PAGE_COUNT = 3;

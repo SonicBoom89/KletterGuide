@@ -25,8 +25,7 @@
         </activity>
 
         <activity android:name=".activities.ClimbingAreaDetailsActivity"/>
-
-        <activity android:name=".TestActivity" android:label="Test"/>
+        <activity android:name=".activities.FullScreenImageDialog" android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
 
 
         <provider

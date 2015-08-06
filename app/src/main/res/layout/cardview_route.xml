@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/primary_500"
                 android:text="Routenname"
-                android:drawableLeft="@drawable/ic_route"
+                android:drawableLeft="@drawable/ic_room_white_24dp"
                 android:drawablePadding="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 

@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,12 +42,15 @@ import java.util.List;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import wolfgang.bergbauer.de.kletterguide.AppConstants;
 import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingFragmentPagerAdapter;
+import wolfgang.bergbauer.de.kletterguide.adapter.HeaderImagePagerAdapter;
 import wolfgang.bergbauer.de.kletterguide.adapter.RouteCardViewAdapter;
 import wolfgang.bergbauer.de.kletterguide.adapter.TransitionAdapter;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingContentProvider;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
 import wolfgang.bergbauer.de.kletterguide.formatter.MyValueFormatter;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
+import wolfgang.bergbauer.de.kletterguide.model.ClimbingImage;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingRoute;
 
 /**
@@ -85,12 +89,14 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
 
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_climbing_details);
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
         collapsingToolbarLayout.setTitle(selectedArea.getName());
 
-
+        initViewPagerHeader();
         initChart(selectedArea);
         initRouteList(selectedArea);
 
+        /*
         ImageView imageView = (ImageView) findViewById(R.id.imageView_climbing_area_details);
         if (selectedArea.getDrawableUrl() != null) {
             try {
@@ -100,13 +106,31 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
                 e.printStackTrace();
             }
        }
+
+          */
         animateView();
-        
         getSupportLoaderManager().restartLoader(URL_ROUTES_LOADER_ALL, null, this);
     }
 
+    private void initViewPagerHeader() {
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_details_header);
+        List<ClimbingImage> images = new ArrayList<>();
+        for (int i = 0; i < 5; ++i)
+        {
+            ClimbingImage image = new ClimbingImage();
+            image.setClimbingId(i);
+            image.setImageUrl(i % 2 == 0 ? "riederin.jpg" : "riederin2.jpg");
+            image.setDescription(i % 2 == 0 ? "Beschreibung 1" : "Beschreibung 2");
+            images.add(image);
+        }
+        viewPager.setAdapter(new HeaderImagePagerAdapter(getSupportFragmentManager(), ClimbingAreaDetailsActivity.this, images));
+
+    }
+
     private void initRouteList(ClimbingArea selectedArea) {
-        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
+        RecyclerView recList = (RecyclerView)
+                findViewById(R.id.cardList);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -173,13 +197,13 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
                 public void onTransitionEnd(Transition transition) {
 
                     findViewById(R.id.fab).animate().alpha(1.0f);
-                    findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f);
+                    //findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f);
                     //getWindow().getEnterTransition().removeListener(this);
                 }
             });
         } else {
             findViewById(R.id.fab).animate().alpha(1.0f).start();
-            findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f).start();
+           // findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f).start();
         }
     }
 
@@ -349,8 +373,8 @@ public class ClimbingAreaDetailsActivity extends AppCompatActivity implements On
         recyclerViewAdapter.notifyItemRangeRemoved(0, size);
         setChartData(selectedArea);
 
-        TextView sumRoutes = (TextView) findViewById(R.id.textView_sum_routes);
-        sumRoutes.setText(selectedArea.getRoutes().size() + "");
+        // TextView sumRoutes = (TextView) findViewById(R.id.textView_sum_routes);
+        // sumRoutes.setText(selectedArea.getRoutes().size() + "");
     }
 
     @Override
