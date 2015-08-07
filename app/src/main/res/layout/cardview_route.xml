@@ -35,17 +35,37 @@
 
         </LinearLayout>
 
-<ImageView
-    card_view:layout_column="0"
-    card_view:layout_row="1"
-    android:layout_margin="10dp"
-    android:src="@drawable/routeicon"
-    android:layout_width="50dp"
-    android:layout_height="50dp"/>
+        <RelativeLayout
+            card_view:layout_column="0"
+            card_view:layout_row="1"
+            android:layout_margin="10dp"
+            android:src="@drawable/routeicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            card_view:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/imageView_cardView_route"
+                android:src="@drawable/routeicon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+
+            <LinearLayout
+                card_view:layout_gravity="center"
+                card_view:layout_column="1"
+                card_view:layout_row="1"
+                android:id="@+id/imageView_cardView_rating_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imageView_cardView_route"
+                android:orientation="horizontal"/>
+
+        </RelativeLayout>
 
             <TextView
                 android:layout_margin="10dp"
-                card_view:layout_column="1"
+                card_view:layout_column="2"
                 card_view:layout_row="1"
                 android:id="@+id/txtDifficulty"
                 android:layout_width="wrap_content"

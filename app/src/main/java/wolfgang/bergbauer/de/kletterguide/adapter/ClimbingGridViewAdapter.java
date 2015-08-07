@@ -7,12 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.List;
 
 import wolfgang.bergbauer.de.kletterguide.R;
+import wolfgang.bergbauer.de.kletterguide.RatingHelper;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingBase;
 
@@ -55,11 +57,14 @@ public class ClimbingGridViewAdapter extends BaseAdapter {
 
             ClimbingBase currentItem = items.get(position);
 
-            grid = new View(mContext);
             grid = inflater.inflate(R.layout.climbing_item, null);
             TextView title = (TextView) grid.findViewById(R.id.textView_climbing_item_title);
             TextView subTitle = (TextView) grid.findViewById(R.id.textView_climbing_item_subtitle);
             ImageView imageView = (ImageView)grid.findViewById(R.id.imageView_climbing_item);
+            LinearLayout ratingContainerView = (LinearLayout) grid.findViewById(R.id.rating_container);
+
+            ratingContainerView.addView(RatingHelper.getRatingIconView(mContext, currentItem.getRanking()));
+
             if (currentItem.getDrawableUrl() != null) {
                 try {
                     Drawable d = Drawable.createFromStream(mContext.getAssets().open(currentItem.getDrawableUrl()), null);
@@ -70,7 +75,7 @@ public class ClimbingGridViewAdapter extends BaseAdapter {
 
             }
             title.setText(currentItem.getName());
-            subTitle.setText(currentItem.getRanking() + "");
+            subTitle.setVisibility(View.GONE);
 
         } else {
             grid = (View) convertView;
