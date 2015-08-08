@@ -27,7 +27,7 @@ public class ClimbingDBHelper extends SQLiteOpenHelper {
      * The database Version. Increment this number if changes to the database have been done and
      * you need to update the users database.
      */
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     /** The name and column index of each column in your database. These should be descriptive.*/
     public static final String TABLE_CLIMBINGAREAS = "ClimbingAreas";

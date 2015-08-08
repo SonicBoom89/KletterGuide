@@ -31,4 +31,5 @@ dependencies {
     compile 'com.android.support:palette-v7:22.2.0'
     compile 'me.villani.lorenzo.android:android-cropimage:1.1.0'
     compile 'com.github.ganfra:material-spinner:1.1.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
 }

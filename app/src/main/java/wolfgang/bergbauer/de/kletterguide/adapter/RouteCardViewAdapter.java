@@ -54,6 +54,10 @@ public class RouteCardViewAdapter extends RecyclerView.Adapter<RouteCardViewAdap
 
         ((GradientDrawable)routeViewHolder.vDifficulty.getBackground()).setColor(
                 context.getResources().getColor(selectedColor));
+
+        //routeViewHolder.vRouteLength.setText("");
+        //routeViewHolder.vRouteRockType.setText("");
+        //routeViewHolder.vRouteStatus.setText("");
     }
 
 
@@ -67,17 +71,23 @@ public class RouteCardViewAdapter extends RecyclerView.Adapter<RouteCardViewAdap
     }
 
     public class RouteViewHolder extends RecyclerView.ViewHolder {
-        protected android.support.v7.widget.GridLayout vContainer;
+        protected RelativeLayout vContainer;
         protected TextView vTitle;
         protected TextView vDifficulty;
         protected LinearLayout vRating_container;
+        protected TextView vRouteStatus;
+        protected TextView vRouteLength;
+        protected TextView vRouteRockType;
 
         public RouteViewHolder(View v) {
             super(v);
-            vContainer = (android.support.v7.widget.GridLayout) v.findViewById(R.id.container);
+            vContainer = (RelativeLayout) v.findViewById(R.id.container);
             vTitle = (TextView) v.findViewById(R.id.title);
             vDifficulty =  (TextView) v.findViewById(R.id.txtDifficulty);
             vRating_container = (LinearLayout) v.findViewById(R.id.imageView_cardView_rating_container);
+            vRouteStatus = (TextView) v.findViewById(R.id.textView_route_status);
+            vRouteLength = (TextView) v.findViewById(R.id.textView_route_length);
+            vRouteRockType = (TextView) v.findViewById(R.id.textView_route_rocktype);
         }
     }
 

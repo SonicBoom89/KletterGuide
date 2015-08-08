@@ -59,7 +59,7 @@ public class ClimbingGridViewAdapter extends BaseAdapter {
 
             grid = inflater.inflate(R.layout.climbing_item, null);
             TextView title = (TextView) grid.findViewById(R.id.textView_climbing_item_title);
-            TextView subTitle = (TextView) grid.findViewById(R.id.textView_climbing_item_subtitle);
+            TextView subTitle = (TextView) grid.findViewById(R.id.textView_climbing_item_distance);
             ImageView imageView = (ImageView)grid.findViewById(R.id.imageView_climbing_item);
             LinearLayout ratingContainerView = (LinearLayout) grid.findViewById(R.id.rating_container);
 
@@ -75,10 +75,9 @@ public class ClimbingGridViewAdapter extends BaseAdapter {
 
             }
             title.setText(currentItem.getName());
-            subTitle.setVisibility(View.GONE);
 
         } else {
-            grid = (View) convertView;
+            grid = convertView;
         }
 
         return grid;

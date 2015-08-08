@@ -58,7 +58,9 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
         String arg = getArguments().getString(ARG_CLIMBING_AREA_TYPE);
         if (arg != null) {
             climbingAreaType = ClimbingAreaType.valueOf(arg);
-            getLoaderManager().restartLoader(URL_CLIMBINGAREAS_LOADER_ALL, null, this);
+            Bundle args = new Bundle();
+            args.putString(ARG_CLIMBING_AREA_TYPE, climbingAreaType.name());
+            getLoaderManager().restartLoader(URL_CLIMBINGAREAS_LOADER_ALL, args, this);
         } else {
             Log.e(TAG, "No ClimbingType specified");
         }
@@ -104,13 +106,17 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
         String where = null;
         String[] whereArgs = null;
         String sortOrder = null;
+
+        if (args != null && args.containsKey(ARG_CLIMBING_AREA_TYPE)) {
+            ClimbingAreaType selectedType = ClimbingAreaType.valueOf(args.getString(ARG_CLIMBING_AREA_TYPE));
+            where = ClimbingDBHelper.COLUMN_CLIMBINGAREAS_TYPE + "= ?";
+            whereArgs = new String[]{selectedType.name()};
+        }
         // Query URI
         Uri queryUri = null;
         switch (loaderID) {
             case URL_CLIMBINGAREAS_LOADER_ALL:
                 queryUri = ClimbingContentProvider.CLIMBINGAREAS_URI;
-                where = ClimbingDBHelper.COLUMN_CLIMBINGAREAS_TYPE + "= ?";
-                whereArgs = new String[]{climbingAreaType.name()};
                 break;
             default:
         }

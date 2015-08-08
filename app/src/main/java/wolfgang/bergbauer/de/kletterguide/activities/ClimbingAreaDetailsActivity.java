@@ -2,6 +2,8 @@ package wolfgang.bergbauer.de.kletterguide.activities;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -17,9 +20,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -77,7 +83,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         enableToolbar();
 
         selectedArea = getIntent().getExtras().getParcelable(AppConstants.EXTRA_CLIMBING_AREA);
-        selectedArea.setRoutes(new ArrayList<ClimbingRoute>());//TODO Load with loader
+        selectedArea.setRoutes(new ArrayList<ClimbingRoute>());
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_climbing_details);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
@@ -88,18 +94,6 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         initRouteList(selectedArea);
         initFab();
 
-        /*
-        ImageView imageView = (ImageView) findViewById(R.id.imageView_climbing_area_details);
-        if (selectedArea.getDrawableUrl() != null) {
-            try {
-                Drawable d = Drawable.createFromStream(getAssets().open(selectedArea.getDrawableUrl()), null);
-                imageView.setImageDrawable(d);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-       }
-
-          */
         animateView();
         getSupportLoaderManager().restartLoader(URL_ROUTES_LOADER_ALL, null, this);
     }
@@ -118,6 +112,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
     private void initViewPagerHeader() {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_details_header);
+        //TODO Get Images from Server and cache them locally
         List<ClimbingImage> images = new ArrayList<>();
         for (int i = 0; i < 5; ++i)
         {
@@ -187,6 +182,15 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
             case android.R.id.home:
                 ActivityCompat.finishAfterTransition(this);
                 return false;
+            case R.id.menu_item_details_share:
+                Snackbar.make(mChart,"Teilen", Snackbar.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_item_details_info:
+                Snackbar.make(mChart,"Info", Snackbar.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_item_details_navigate:
+                Snackbar.make(mChart,"Routenplaner", Snackbar.LENGTH_SHORT).show();
+                break;
         }
         return false;
     }
@@ -200,13 +204,10 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
                 public void onTransitionEnd(Transition transition) {
 
                     findViewById(R.id.fab).animate().alpha(1.0f);
-                    //findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f);
-                    //getWindow().getEnterTransition().removeListener(this);
                 }
             });
         } else {
             findViewById(R.id.fab).animate().alpha(1.0f).start();
-           // findViewById(R.id.linearlayout_imageDesc).animate().alpha(1.0f).start();
         }
     }
 
@@ -384,4 +385,11 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.details_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
 }

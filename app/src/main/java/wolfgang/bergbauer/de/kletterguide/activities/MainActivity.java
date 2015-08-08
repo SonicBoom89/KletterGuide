@@ -17,15 +17,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import wolfgang.bergbauer.de.kletterguide.R;
 import wolfgang.bergbauer.de.kletterguide.adapter.ClimbingFragmentPagerAdapter;
 import wolfgang.bergbauer.de.kletterguide.dataaccess.ClimbingDBHelper;
 
 
-public class MainActivity extends ToolbarActivity {
+public class MainActivity extends ToolbarActivity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     /* Tag for logging */
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    private GoogleApiClient mGoogleApiClient;
 
     private CollapsingToolbarLayout collapsing_toolbar;
 
@@ -54,6 +60,19 @@ public class MainActivity extends ToolbarActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         colorize();
+        getGPSPosition();
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    private void getGPSPosition() {
+        buildGoogleApiClient();
     }
 
     private void colorize() {
@@ -104,4 +123,18 @@ public class MainActivity extends ToolbarActivity {
     }
 
 
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }

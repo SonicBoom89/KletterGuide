@@ -47,5 +47,8 @@
     </style>
 
 
+    <style name="TextAppearance.XSmall" parent="android:style/TextAppearance.Small">
+        <item name="android:textSize">10sp</item>
+    </style>
 
 </resources>

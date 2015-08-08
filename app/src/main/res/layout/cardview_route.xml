@@ -7,20 +7,21 @@
     card_view:cardCornerRadius="4dp"
     android:layout_margin="5dp">
 
-    <android.support.v7.widget.GridLayout
+    <RelativeLayout
         android:id="@+id/container"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout android:orientation="horizontal"
-            card_view:layout_column="0"
-            card_view:layout_row="0"
+        <LinearLayout
+            android:id="@+id/cardView_route_header_container"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
             card_view:layout_columnSpan="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary_500"
-            >
+            android:background="@color/primary_500">
+
             <TextView
                 android:id="@+id/title"
                 android:padding="3dp"
@@ -32,14 +33,12 @@
                 android:drawablePadding="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat"/>
 
-
         </LinearLayout>
 
         <RelativeLayout
-            card_view:layout_column="0"
-            card_view:layout_row="1"
+            android:id="@+id/cardView_route_header_image"
+            android:layout_below="@+id/cardView_route_header_container"
             android:layout_margin="10dp"
-            android:src="@drawable/routeicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -53,8 +52,6 @@
 
             <LinearLayout
                 card_view:layout_gravity="center"
-                card_view:layout_column="1"
-                card_view:layout_row="1"
                 android:id="@+id/imageView_cardView_rating_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,53 +60,84 @@
 
         </RelativeLayout>
 
+        <android.support.v7.widget.GridLayout
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@+id/cardView_route_header_image"
+            android:layout_below="@+id/cardView_route_header_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <TextView
-                android:layout_margin="10dp"
-                card_view:layout_column="2"
-                card_view:layout_row="1"
-                android:id="@+id/txtDifficulty"
+                card_view:layout_column="0"
+                card_view:layout_row="0"
+                android:text="Routenlänge: "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5+"
-                android:textAppearance="@style/TextAppearance.AppCompat"
-                android:background="@drawable/difficulty_background"
-                android:gravity="center" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:gravity="center"
+                android:drawableLeft="@drawable/ic_explore_black_24dp"
+                android:drawablePadding="5dp"/>
 
+            <TextView
+                android:id="@+id/textView_route_length"
+                card_view:layout_column="1"
+                card_view:layout_row="0"
+                android:text="12m "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
 
-        <!--
-                <CheckBox
-                    card_view:layout_column="0"
-                    card_view:layout_row="1"
-                    android:id="@+id/AccomplishedRoute"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Route gemeistert"
-                    android:checked="true"
-                    android:textColor="@color/cardview_dark_background"
-                    android:background="@android:color/transparent"
-                    card_view:layout_gravity="center_horizontal" />
+            <TextView
+                card_view:layout_column="0"
+                card_view:layout_row="1"
+                android:text="Felstyp: "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:gravity="center"
+                android:drawableLeft="@drawable/ic_info_outline_black_24dp"
+                android:drawablePadding="5dp"/>
 
-                <CheckBox
-                    card_view:layout_column="1"
-                    card_view:layout_row="1"
-                    android:id="@+id/AccomplishedNachstieg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nachstieg"
-                    android:checked="true"
-                    android:textColor="@color/cardview_dark_background"
-                    card_view:layout_gravity="center_horizontal" />
+            <TextView
+                android:id="@+id/textView_route_rocktype"
+                card_view:layout_column="1"
+                card_view:layout_row="1"
+                android:text="Granit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
 
-                <CheckBox
-                    card_view:layout_column="2"
-                    card_view:layout_row="1"
-                    android:id="@+id/AccomplishedVorstieg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vorstieg"
-                    android:checked="true"
-                    android:textColor="@color/cardview_dark_background"
-                    card_view:layout_gravity="center_horizontal" />
-        -->
-    </android.support.v7.widget.GridLayout>
+            <TextView
+                card_view:layout_column="0"
+                card_view:layout_row="2"
+                android:text="Zustand "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:gravity="center"
+                android:drawableLeft="@drawable/ic_done_black_24dp"
+                android:drawablePadding="5dp"/>
+
+            <TextView
+                android:id="@+id/textView_route_status"
+                card_view:layout_column="1"
+                card_view:layout_row="2"
+                android:text="Gut "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
+
+        </android.support.v7.widget.GridLayout>
+
+        <TextView
+            android:layout_margin="10dp"
+            android:id="@+id/txtDifficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5+"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:background="@drawable/difficulty_background"
+            android:gravity="center"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

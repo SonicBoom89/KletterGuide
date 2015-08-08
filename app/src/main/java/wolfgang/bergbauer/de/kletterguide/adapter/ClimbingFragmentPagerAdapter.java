@@ -45,6 +45,8 @@ public class ClimbingFragmentPagerAdapter extends FragmentPagerAdapter {
                 return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.OUTDOOR);
             case 1:
                 return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.INDOOR);
+            case 2:
+                return ClimbingAreaPagerFragment.newInstance(ClimbingAreaType.FAVORITES);
         }
         return null;
     }
