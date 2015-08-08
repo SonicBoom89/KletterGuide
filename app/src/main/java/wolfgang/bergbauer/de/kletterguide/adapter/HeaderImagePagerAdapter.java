@@ -15,7 +15,9 @@ import java.util.List;
 import wolfgang.bergbauer.de.kletterguide.ClimbingAreaType;
 import wolfgang.bergbauer.de.kletterguide.R;
 import wolfgang.bergbauer.de.kletterguide.activities.ClimbingAreaDetailsActivity;
+import wolfgang.bergbauer.de.kletterguide.fragments.ClimbingAreaInfoFragment;
 import wolfgang.bergbauer.de.kletterguide.fragments.ClimbingAreaPagerFragment;
+import wolfgang.bergbauer.de.kletterguide.fragments.GoogleMapsFragment;
 import wolfgang.bergbauer.de.kletterguide.fragments.HeaderImageFragment;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
 import wolfgang.bergbauer.de.kletterguide.model.ClimbingImage;
@@ -26,22 +28,27 @@ import wolfgang.bergbauer.de.kletterguide.model.ClimbingImage;
 public class HeaderImagePagerAdapter extends FragmentPagerAdapter {
 
     private Context context;
-    private List<ClimbingImage> climbingImages;
+    private ClimbingArea climbingArea;
 
-    public HeaderImagePagerAdapter(FragmentManager fm, Context context, List<ClimbingImage> climbingImages) {
+    public HeaderImagePagerAdapter(FragmentManager fm, Context context, ClimbingArea climbingArea) {
         super(fm);
         this.context = context;
-        this.climbingImages = climbingImages;
+        this.climbingArea = climbingArea;
     }
 
     @Override
     public int getCount() {
-        return climbingImages.size();
+        return climbingArea.getImages().size();
     }
 
     @Override
     public Fragment getItem(int position) {
-        return HeaderImageFragment.newInstance(climbingImages.get(position));
+        if (position == 0)
+        {
+            return ClimbingAreaInfoFragment.newInstance(climbingArea);
+        } else
+            return HeaderImageFragment.newInstance(climbingArea.getImages().get(position));
+        // return GoogleMapsFragment.newInstance(climbingArea.getName(), climbingArea.getLatitude(), climbingArea.getLongitude());
     }
 
 }

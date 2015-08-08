@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,11 +18,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.util.Log;
@@ -74,6 +79,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
     private ClimbingArea selectedArea;
 
     private RouteCardViewAdapter recyclerViewAdapter;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +117,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
 
     private void initViewPagerHeader() {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_details_header);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_details_header);
         //TODO Get Images from Server and cache them locally
         List<ClimbingImage> images = new ArrayList<>();
         for (int i = 0; i < 5; ++i)
@@ -122,8 +128,13 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
             image.setDescription(i % 2 == 0 ? "Beschreibung 1" : "Beschreibung 2");
             images.add(image);
         }
-        viewPager.setAdapter(new HeaderImagePagerAdapter(getSupportFragmentManager(), ClimbingAreaDetailsActivity.this, images));
-
+        selectedArea.setImages(images);
+        viewPager.setAdapter(new HeaderImagePagerAdapter(getSupportFragmentManager(), ClimbingAreaDetailsActivity.this, selectedArea));
+        Handler handlerTimer = new Handler();
+        handlerTimer.postDelayed(new Runnable() {
+            public void run() {
+               viewPager.setCurrentItem(1, true);
+            }}, 500);
     }
 
     private void initRouteList(ClimbingArea selectedArea) {
@@ -182,14 +193,11 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
             case android.R.id.home:
                 ActivityCompat.finishAfterTransition(this);
                 return false;
-            case R.id.menu_item_details_share:
-                Snackbar.make(mChart,"Teilen", Snackbar.LENGTH_SHORT).show();
-                break;
             case R.id.menu_item_details_info:
                 Snackbar.make(mChart,"Info", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.menu_item_details_navigate:
-                Snackbar.make(mChart,"Routenplaner", Snackbar.LENGTH_SHORT).show();
+                startNavigationIntent(selectedArea);
                 break;
         }
         return false;
@@ -209,6 +217,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         } else {
             findViewById(R.id.fab).animate().alpha(1.0f).start();
         }
+
     }
 
     private void setChartData(ClimbingArea ClimbingArea) {
@@ -376,7 +385,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         selectedRoutes.addAll(selectedArea.getRoutes());
         recyclerViewAdapter.notifyItemRangeRemoved(0, size);
         setChartData(selectedArea);
-
+        setShareIntent(selectedArea);
         // TextView sumRoutes = (TextView) findViewById(R.id.textView_sum_routes);
         // sumRoutes.setText(selectedArea.getRoutes().size() + "");
     }
@@ -389,7 +398,52 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.details_menu, menu);
+        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
+    public void setShareIntent(ClimbingArea area) {
+        if (menu != null) {
+            MenuItem shareItem = menu.findItem(R.id.menu_item_details_share);
+            ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType(AppConstants.MIME_TEXT_PLAIN);
+            String shareBody = "";
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Klettergebiet Empfehlung");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            mShareActionProvider.setShareIntent(sharingIntent);
+        }
+    }
+
+    public void startNavigationIntent(final ClimbingArea area) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set title
+        alertDialogBuilder.setTitle("Navigation starten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Navigation zum Klettergebiet starten?")
+                .setCancelable(false)
+                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                Uri.parse("http://maps.google.com/maps?saddr=" + area.getLatitude() + "," +
+                                        area.getLongitude() + "&daddr=" + area.getLatitude() + "," + area.getLongitude()));
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Abbrechen",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+    }
 }

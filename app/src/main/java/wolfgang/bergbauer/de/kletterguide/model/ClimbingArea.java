@@ -15,7 +15,9 @@ public class ClimbingArea extends ClimbingBase implements Parcelable {
 
     private ClimbingAreaType climbingAreatype;
 
-    private List<ClimbingRoute> routes;
+    private List<ClimbingRoute> routes = new ArrayList<>();
+    private List<ClimbingImage> images = new ArrayList<>();
+
     private String description;
 
     public ClimbingArea(ClimbingAreaType climbingAreatype) {
@@ -91,4 +93,12 @@ public class ClimbingArea extends ClimbingBase implements Parcelable {
             return new ClimbingArea[size];
         }
     };
+
+    public List<ClimbingImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ClimbingImage> images) {
+        this.images = images;
+    }
 }

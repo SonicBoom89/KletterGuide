@@ -14,4 +14,15 @@ public class Utils {
     public static String getUniqueImageFilename() {
         return "img_" + System.currentTimeMillis();
     }
+
+    /**
+     * This method is used to convert the integer coord used by PTE to the float coord
+     * used by google
+     * @param lat the int coord
+     * @return the float coord
+     */
+    public static float createGoogleCoords(int lat) {
+        return (((float) lat) / 1000000);
+    }
+
 }

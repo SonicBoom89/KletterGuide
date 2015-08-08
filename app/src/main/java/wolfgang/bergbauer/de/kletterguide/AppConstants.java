@@ -13,4 +13,8 @@ public class AppConstants {
     public final static int[] UIAA_CHART_COLORS = {R.color.uiaa_color_3, R.color.uiaa_color_4, R.color.uiaa_color_5, R.color.uiaa_color_6,
             R.color.uiaa_color_7, R.color.uiaa_color_8, R.color.uiaa_color_9, R.color.uiaa_color_10,
             R.color.uiaa_color_11, R.color.uiaa_color_12, R.color.uiaa_color_13};
+    /**
+     * Mime Text Declaration
+     */
+    public static final String MIME_TEXT_PLAIN = "text/plain";
 }
