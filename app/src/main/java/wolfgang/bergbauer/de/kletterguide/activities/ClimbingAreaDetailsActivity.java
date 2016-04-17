@@ -284,6 +284,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
            if (Utils.trimUIAARank(route.getUIAARank()) == selectedDifficulty)
                selectedRoutes.add(route);
        }
+        recyclerViewAdapter.notifyItemRangeChanged(0, selectedRoutes.size());
     }
 
     private void clearSelectedRoutes() {
