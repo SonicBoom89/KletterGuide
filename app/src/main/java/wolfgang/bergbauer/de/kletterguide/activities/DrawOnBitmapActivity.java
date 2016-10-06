@@ -85,7 +85,7 @@ public class DrawOnBitmapActivity extends ToolbarActivity
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.menu_item_done:
+           /* case R.id.menu_item_done:
                 if (alteredBitmap != null)
                 {
                     ContentValues contentValues = new ContentValues(3);
@@ -106,10 +106,10 @@ public class DrawOnBitmapActivity extends ToolbarActivity
                     } else {
                         getParent().setResult(Activity.RESULT_OK);
                     }
-                    finishActivity(ClimbingPhotoActivity.REQUEST_PAINT_ROUTE);
+                    //finishActivity(ClimbingPhotoActivity.REQUEST_PAINT_ROUTE);
                     finish();
                 }
-                return true;
+                return true;*/
         }
 
         return super.onOptionsItemSelected(item);

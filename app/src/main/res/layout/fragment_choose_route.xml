@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="20dp">
+
+    <TextView
+        android:id="@+id/txt_photo_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Schritt 2: Route auswählen"
+        android:layout_below="@id/imageView_cropped_photo"
+        android:layout_marginBottom="10dp"
+        style="@style/TextAppearance.AppCompat.Inverse"/>
+
+    <RecyclerView
+        android:id="@+id/recyclerView_routes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:layout_margin="20dp">
+
+    <TextView
+        android:id="@+id/txt_photo_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Schritt 1: Foto auswählen"
+        android:layout_marginBottom="10dp"
+        style="@style/TextAppearance.AppCompat.Inverse"/>
+
+    <ImageView
+        android:id="@+id/imageView_cropped_photo"
+        android:src="@drawable/routeicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"/>
+
+</LinearLayout>
