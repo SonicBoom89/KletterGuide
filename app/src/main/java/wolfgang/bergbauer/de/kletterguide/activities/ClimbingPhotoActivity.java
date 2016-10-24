@@ -42,7 +42,6 @@ import wolfgang.bergbauer.de.kletterguide.adapter.AddPhotoPagerAdapter;
 public class ClimbingPhotoActivity extends ToolbarActivity {
 
     private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
 
     public static final String ARG_PHOTO_URI = "photo_uri";
 
@@ -53,7 +52,7 @@ public class ClimbingPhotoActivity extends ToolbarActivity {
         enableToolbar();
 
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new AddPhotoPagerAdapter();
+        PagerAdapter mPagerAdapter = new AddPhotoPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
     }
 

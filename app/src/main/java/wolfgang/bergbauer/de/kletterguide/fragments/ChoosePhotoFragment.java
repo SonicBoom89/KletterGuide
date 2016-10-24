@@ -1,6 +1,7 @@
 package wolfgang.bergbauer.de.kletterguide.fragments;
 
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -10,7 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +30,7 @@ import wolfgang.bergbauer.de.kletterguide.R;
 public class ChoosePhotoFragment extends Fragment {
 
     private static final int RESULT_OK = 0;
+    private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 0;
     private ImageView croppedImage;
 
     private Uri outputFileUri;
@@ -42,6 +46,7 @@ public class ChoosePhotoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        checkPermissions();
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_choose_photo, container, false);
 
@@ -52,9 +57,56 @@ public class ChoosePhotoFragment extends Fragment {
                 openImageIntent();
             }
         });
-        openImageIntent();
 
         return rootView;
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_MEDIA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_MEDIA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    openImageIntent();
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
     }
 
     private void openImageIntent() {

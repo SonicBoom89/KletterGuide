@@ -2,6 +2,7 @@ package wolfgang.bergbauer.de.kletterguide.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,16 @@ import wolfgang.bergbauer.de.kletterguide.fragments.DrawRouteFragment;
 /**
  * Created by Wolfgang on 17.04.2016.
  */
-public class AddPhotoPagerAdapter extends PagerAdapter {
+public class AddPhotoPagerAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_PAGES = 3;
 
+    public AddPhotoPagerAdapter(FragmentManager fm) {
+        super(fm);
+    }
+
     @Override
-    public Fragment instantiateItem(ViewGroup group, int position) {
+    public Fragment getItem(int position) {
         switch (position)
         {
             case 0: return ChoosePhotoFragment.newInstance();

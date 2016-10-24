@@ -9,14 +9,16 @@
 
     <TextView
         android:id="@+id/txt_photo_header"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Schritt 2: Route auswählen"
         android:layout_below="@id/imageView_cropped_photo"
         android:layout_marginBottom="10dp"
-        style="@style/TextAppearance.AppCompat.Inverse"/>
+        android:background="@color/primary_700"
+        android:padding="10dp"
+        style="@style/TextAppearance.AppCompat"/>
 
-    <RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView_routes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
