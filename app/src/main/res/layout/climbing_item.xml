@@ -22,7 +22,7 @@
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/semi_black_background"
+            android:background="@drawable/semi_green_background"
             android:orientation="vertical">
 
         <TextView

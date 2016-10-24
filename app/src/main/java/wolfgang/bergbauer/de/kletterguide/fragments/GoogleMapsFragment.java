@@ -1,9 +1,12 @@
 package wolfgang.bergbauer.de.kletterguide.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -21,13 +25,17 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by Wolfgang on 08.08.2015.
  */
-public class GoogleMapsFragment extends SupportMapFragment {
+public class GoogleMapsFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     /* Tag for logging */
     public static final String TAG = GoogleMapsFragment.class.getSimpleName();
     private static final String ARG_NAME = "name";
     private static final String ARG_LAT = "latitude";
     private static final String ARG_LNG = "longitude";
+
+    private String name;
+    private float latitude;
+    private float longitude;
 
     private GoogleMap map;
 
@@ -44,10 +52,11 @@ public class GoogleMapsFragment extends SupportMapFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
-        Bundle args = savedInstanceState;
-        if (args != null && containsMapInfo(args))
-        {
-            initMap(args.getString(ARG_NAME), args.getFloat(ARG_LAT), args.getFloat(ARG_LNG));
+        if (savedInstanceState != null && containsMapInfo(savedInstanceState)) {
+            name = savedInstanceState.getString(ARG_NAME);
+            latitude = savedInstanceState.getFloat(ARG_LAT);
+            longitude = savedInstanceState.getFloat(ARG_LNG);
+            getMapAsync(this);
         } else {
             //TODO Show Error if no Location is available
         }
@@ -59,21 +68,29 @@ public class GoogleMapsFragment extends SupportMapFragment {
         return args.containsKey(ARG_NAME) && args.containsKey(ARG_LAT) && args.containsKey(ARG_LNG);
     }
 
-    private void initMap(String name, float latitude, float longitude){
+    private void initMap(String name, float latitude, float longitude) {
         if (map == null) {
-            map = getMap();
-            // check if map is created successfully or not
-            if (map == null) {
-                Toast.makeText(getActivity(),
-                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-                        .show();
-                getActivity().finish();
-            }
-        }
-        if (map != null) {
+            Toast.makeText(getActivity(),
+                    "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+                    .show();
+            getActivity().finish();
+        } else {
             map.clear();
 
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            if (ActivityCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             map.setMyLocationEnabled(true);
             android.location.Location myLoc = map.getMyLocation();
             // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
@@ -92,5 +109,11 @@ public class GoogleMapsFragment extends SupportMapFragment {
 
 
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        initMap(name, latitude, longitude);
     }
 }

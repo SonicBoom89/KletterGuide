@@ -25,4 +25,11 @@ public class ToolbarActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
+
+    public void setTitle(String title) {
+        super.setTitle(title);
+        if (toolbar != null) {
+            toolbar.setTitle(title);
+        }
+    }
 }

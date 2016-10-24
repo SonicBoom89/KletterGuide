@@ -42,6 +42,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
@@ -78,6 +79,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
     private List<ClimbingRoute> selectedRoutes = new ArrayList<>();
     private ClimbingArea selectedArea;
 
+    private RecyclerView recList;
     private RouteCardViewAdapter recyclerViewAdapter;
     private Menu menu;
 
@@ -138,7 +140,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
     }
 
     private void initRouteList(ClimbingArea selectedArea) {
-        RecyclerView recList = (RecyclerView)
+        recList = (RecyclerView)
                 findViewById(R.id.cardList);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -159,7 +161,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         mChart.getLegend().setEnabled(false);
         mChart.setDrawBarShadow(false);
         mChart.setDrawValueAboveBar(true);
-        mChart.setDescription("");
+        mChart.getDescription().setEnabled(false);
 
         // if more than 60 entries are displayed in the chart, no values will be
         // drawn
@@ -175,7 +177,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setSpaceBetweenLabels(2);
+        xAxis.setLabelCount(2);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setEnabled(false);
@@ -222,7 +224,7 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
 
     private void setChartData(ClimbingArea ClimbingArea) {
 
-        HashMap<Integer, Integer> difficultyMap =new HashMap<>();
+        HashMap<Integer, Integer> difficultyMap = new HashMap<>();
         for (int i = AppConstants.MIN_UIAA_LEVEL; i <= AppConstants.MAX_UIAA_LEVEL; ++i)
         {
             difficultyMap.put(i, 0);
@@ -239,16 +241,19 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
         }
 
         ArrayList<BarEntry> routeDifficulties = new ArrayList<BarEntry>();
-        int indexCounter = 0;
+
         String[] xVals = new String[difficultyMap.size()];
         List<Integer> orderedList = new ArrayList<>(difficultyMap.keySet());
         Collections.sort(orderedList);
+        int indexCounter = 0;
         for (Integer difficulty : orderedList)
         {
             xVals[indexCounter] = difficulty + "";
-            BarEntry entry = new BarEntry(difficultyMap.get(difficulty), indexCounter++ , difficulty +"");
+            //BarEntry entry = new BarEntry(difficultyMap.get(difficulty), indexCounter++ , difficulty +"");
+            BarEntry entry = new BarEntry(difficulty, difficultyMap.get(difficulty), indexCounter++);
             routeDifficulties.add(entry);
         }
+        mChart.getXAxis().setLabelCount(xVals.length);
 
         BarDataSet set1 = new BarDataSet(routeDifficulties, "Schwierigkeiten");
         //set1.setColor(getResources().getColor(R.color.primary_700));
@@ -258,24 +263,24 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
             uiaaChartColors[i] = getResources().getColor(AppConstants.UIAA_CHART_COLORS[i]);
         }
         set1.setColors(uiaaChartColors);
-        set1.setBarSpacePercent(35f);
 
-        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
-        BarData data = new BarData(xVals, dataSets);
+        BarData data = new BarData(dataSets);
         data.setValueFormatter(new MyValueFormatter());
         data.setValueTextSize(10f);
 
         mChart.setData(data);
+
         mChart.animateX(1000);
         mChart.animateY(1000);
     }
 
     @SuppressLint("NewApi")
     @Override
-    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-        int selectedDifficulty = Integer.parseInt((String) e.getData());
+    public void onValueSelected(Entry e, Highlight h) {
+        int selectedDifficulty = (int) e.getX();
 
         clearSelectedRoutes();
 
@@ -284,21 +289,24 @@ public class ClimbingAreaDetailsActivity extends ToolbarActivity implements OnCh
            if (Utils.trimUIAARank(route.getUIAARank()) == selectedDifficulty)
                selectedRoutes.add(route);
        }
-        recyclerViewAdapter.notifyItemRangeChanged(0, selectedRoutes.size());
+        //recyclerViewAdapter.notifyItemRangeChanged(0, selectedRoutes.size());
+        recyclerViewAdapter.notifyItemRangeRemoved(0, selectedArea.getRoutes().size());
+        recList.invalidate();
+
+        if (selectedRoutes.isEmpty())
+            onNothingSelected();
     }
 
     private void clearSelectedRoutes() {
         int size = selectedRoutes.size();
-        for (int i = 0; i < size; ++i)
-        {
-            selectedRoutes.remove(0);
-            recyclerViewAdapter.notifyItemRemoved(i);
-        }
+        selectedRoutes.clear();
+        recyclerViewAdapter.notifyItemRangeRemoved(0, selectedArea.getRoutes().size());
     }
 
     public void onNothingSelected() {
         clearSelectedRoutes();
         selectedRoutes.addAll(selectedArea.getRoutes());
+        recyclerViewAdapter.notifyItemRangeRemoved(0, selectedArea.getRoutes().size());
     };
 
     @Override

@@ -5,6 +5,8 @@
     <color name="primary_500">#ff00b91a</color>
     <!--Indigo 700-->
     <color name="primary_700">#ff007b14</color>
+    <!--Indigo 700-->
+    <color name="semi_primary_700">#9a007b14</color>
     <!--Pink 500-->
     <color name="accent_500">#fffcfff7</color>
     <!--Pink 700-->

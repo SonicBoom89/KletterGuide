@@ -26,8 +26,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.android.camera.CropImageIntentBuilder;
-
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;

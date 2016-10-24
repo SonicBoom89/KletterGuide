@@ -48,8 +48,8 @@ public class MainActivity extends ToolbarActivity  implements GoogleApiClient.Co
         db.close();
         setContentView(R.layout.activity_main);
         enableToolbar();
-
-        collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        setTitle("Topos");
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
