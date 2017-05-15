@@ -7,6 +7,8 @@ public class AppConstants {
 
     public static final String EXTRA_CLIMBING_AREA = "climbing_area";
 
+    public static final String FIREBASE_DATABASE = "https://climbingguide-33dee.firebaseio.com";
+
     public static final int MIN_UIAA_LEVEL = 3;
     public static final int MAX_UIAA_LEVEL = 13;
 

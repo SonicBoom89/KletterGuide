@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "959778947228",
+    "firebase_url": "https://climbingguide-33dee.firebaseio.com",
+    "project_id": "climbingguide-33dee",
+    "storage_bucket": "climbingguide-33dee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959778947228:android:980636ec6263fd50",
+        "android_client_info": {
+          "package_name": "wolfgang.bergbauer.de.kletterguide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "959778947228-jpqhfk0bo51g9u8gb5632c4a29tqs6uv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wolfgang.bergbauer.de.kletterguide",
+            "certificate_hash": "3868741adb69cfabc8a8e3c7000230c1ca648252"
+          }
+        },
+        {
+          "client_id": "959778947228-v9cl9nel17h90f7q9hg0v3g4v0gpcjns.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRKEQElTIXMZgse6bAM60wlDEx5FkbCY0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "959778947228-v9cl9nel17h90f7q9hg0v3g4v0gpcjns.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
