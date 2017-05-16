@@ -20,6 +20,10 @@ public class ClimbingArea extends ClimbingBase implements Parcelable {
 
     private String description;
 
+    public ClimbingArea() {
+
+    }
+
     public ClimbingArea(ClimbingAreaType climbingAreatype) {
         super();
         this.climbingAreatype = climbingAreatype;

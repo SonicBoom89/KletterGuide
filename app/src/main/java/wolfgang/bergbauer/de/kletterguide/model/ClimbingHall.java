@@ -7,18 +7,22 @@ import wolfgang.bergbauer.de.kletterguide.ClimbingAreaType;
  */
 public class ClimbingHall extends ClimbingArea {
 
-    private TicketInfo ticketInfo;
-    private OpeningTimes openingTimes;
+    private String ticketInfo;
+    private String openingTimes;
+
+    public ClimbingHall() {
+
+    }
 
     public ClimbingHall(ClimbingAreaType climbingAreatype) {
         super(climbingAreatype);
     }
 
-    public TicketInfo getTicketInfo() {
+    public String getTicketInfo() {
         return ticketInfo;
     }
 
-    public void setTicketInfo(TicketInfo ticketInfo) {
+    public void setTicketInfo(String ticketInfo) {
         this.ticketInfo = ticketInfo;
     }
 }

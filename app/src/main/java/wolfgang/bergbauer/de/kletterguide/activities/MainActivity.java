@@ -39,13 +39,6 @@ public class MainActivity extends ToolbarActivity  implements GoogleApiClient.Co
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-                /*
-                 * Get database to create the structure. This must be done manually, as the database
-                 * is created with sql files, which needs a context
-                */
-        ClimbingDBHelper dbHelper = new ClimbingDBHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.close();
         setContentView(R.layout.activity_main);
         enableToolbar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);

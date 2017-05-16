@@ -17,8 +17,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import wolfgang.bergbauer.de.kletterguide.AppConstants;
 import wolfgang.bergbauer.de.kletterguide.ClimbingAreaType;
@@ -32,7 +40,7 @@ import wolfgang.bergbauer.de.kletterguide.model.ClimbingArea;
 /**
  * Created by berg21 on 05.08.2015.
  */
-public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ClimbingAreaPagerFragment extends Fragment {
 
     private static final String ARG_CLIMBING_AREA_TYPE = "climbing_area_type";
 
@@ -57,14 +65,48 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
         super.onCreate(savedInstanceState);
         String arg = getArguments().getString(ARG_CLIMBING_AREA_TYPE);
         if (arg != null) {
+
             climbingAreaType = ClimbingAreaType.valueOf(arg);
             Bundle args = new Bundle();
             args.putString(ARG_CLIMBING_AREA_TYPE, climbingAreaType.name());
-            getLoaderManager().restartLoader(URL_CLIMBINGAREAS_LOADER_ALL, args, this);
+
+            //getLoaderManager().restartLoader(URL_CLIMBINGAREAS_LOADER_ALL, args, this);
         } else {
             Log.e(TAG, "No ClimbingType specified");
         }
-        climbingAreas = new ArrayList<>();
+    }
+
+    private List<ClimbingArea> loadClimbingAreas(ClimbingAreaType climbingAreaType) {
+        final List<ClimbingArea> result = new ArrayList<>();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String selectedDatabase;
+        switch (climbingAreaType) {
+            case OUTDOOR:
+                selectedDatabase = "climbinareas";
+                break;
+            case INDOOR:
+                selectedDatabase = "climbinghalls";
+                break;
+            default:
+                selectedDatabase = "climbingareas";
+        }
+        DatabaseReference ref = database.getReference(selectedDatabase);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    ClimbingArea area = postSnapshot.getValue(ClimbingArea.class);
+                    climbingAreas.add(area);
+                }
+                gridViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error", databaseError.toException());
+            }
+        });
+        return result;
     }
 
     @Override
@@ -74,6 +116,7 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
 
         final GridView gridView = (GridView) view.findViewById(R.id.gridView_climbing);
 
+        climbingAreas = new ArrayList<>();
         gridViewAdapter = new ClimbingGridViewAdapter(getActivity(), climbingAreas);
         gridView.setAdapter(gridViewAdapter);
 
@@ -94,88 +137,7 @@ public class ClimbingAreaPagerFragment extends Fragment implements LoaderManager
             }
         });
 
+        loadClimbingAreas(climbingAreaType);
         return view;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
-        // Construct the new query in the form of a Cursor Loader. Use the id
-        // parameter to contruct and return different loaders.
-
-        String[] projection = null;
-        String where = null;
-        String[] whereArgs = null;
-        String sortOrder = null;
-
-        if (args != null && args.containsKey(ARG_CLIMBING_AREA_TYPE)) {
-            ClimbingAreaType selectedType = ClimbingAreaType.valueOf(args.getString(ARG_CLIMBING_AREA_TYPE));
-            where = ClimbingDBHelper.COLUMN_CLIMBINGAREAS_TYPE + "= ?";
-            whereArgs = new String[]{selectedType.name()};
-        }
-        // Query URI
-        Uri queryUri = null;
-        switch (loaderID) {
-            case URL_CLIMBINGAREAS_LOADER_ALL:
-                queryUri = ClimbingContentProvider.CLIMBINGAREAS_URI;
-                break;
-            default:
-        }
-
-        // Create the new Cursor loader.
-        return new CursorLoader(getActivity(), queryUri,
-                projection, where, whereArgs, sortOrder);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // Replace the result Cursor displayed by the Cursor Adapter with
-        // the new result set.
-
-        // This handler is not synchonrized with the UI thread, so you
-        // will need to synchronize it before modiyfing any UI elements
-        // directly.
-
-        switch (loader.getId()) {
-            case URL_CLIMBINGAREAS_LOADER_ALL:
-                while(data.moveToNext()) {
-                    int climbingAreaIdColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_ID);
-                    int climbingAreaNameColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_NAME);
-                    int climbingAreaLatitudeColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_LATITUDE);
-                    int climbingAreaLongitudeColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_LONGITUDE);
-                    int climbingAreaRankingColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_RANKING);
-                    int climbingAreaTypeColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_TYPE);
-                    int climbingAreaImageColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_IMAGE_URL);
-                    int climbingAreaDescriptionColumnIndex = data.getColumnIndex(ClimbingDBHelper.COLUMN_CLIMBINGAREAS_DESCRIPTION);
-
-                    int id = data.getInt(climbingAreaIdColumnIndex);
-                    String name = data.getString(climbingAreaNameColumnIndex);
-                    float latitude = data.getFloat(climbingAreaLatitudeColumnIndex);
-                    float longitude = data.getFloat(climbingAreaLongitudeColumnIndex);
-                    float ranking = data.getFloat(climbingAreaRankingColumnIndex);
-                    String type = data.getString(climbingAreaTypeColumnIndex);
-                    String imageUrl = data.getString(climbingAreaImageColumnIndex);
-                    String description = data.getString(climbingAreaDescriptionColumnIndex);
-
-                    ClimbingArea climbingArea = new ClimbingArea(ClimbingAreaType.valueOf(type));
-                    climbingArea.setId(id);
-                    climbingArea.setName(name);
-                    climbingArea.setLatitude(latitude);
-                    climbingArea.setLongitude(longitude);
-                    climbingArea.setRanking(ranking);
-                    climbingArea.setDrawableUrl(imageUrl);
-                    climbingArea.setDescription(description);
-
-                    Log.d(TAG, "Climbing Area loaded: " + climbingArea);
-                    climbingAreas.add(climbingArea);
-                    gridViewAdapter.notifyDataSetChanged();
-                }
-                break;
-            default:
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 }
