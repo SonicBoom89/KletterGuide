@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "959778947228-7gjffk3n5g537qm0g30e1a2r7a395edt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wolfgang.bergbauer.de.kletterguide",
+            "certificate_hash": "88276cca5b3756b2b8308166f90f02ae816d7ee8"
+          }
+        },
+        {
           "client_id": "959778947228-jpqhfk0bo51g9u8gb5632c4a29tqs6uv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
